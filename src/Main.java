@@ -55,6 +55,7 @@ public class Main {
 
 	// Selects a new word from the list of words and sets allowed number of guesses
 	public void newWord() throws Exception {
+		System.out.println("nexWord");
 		File f = new File("words.txt");
 		BufferedReader reader = new BufferedReader(new FileReader(f));
 		for (int i = 0; i < new Random().nextInt((int) (f.length() - 1)); i++)
@@ -62,12 +63,14 @@ public class Main {
 
 		word = reader.readLine();
 		guessedLetters = new String(new char[word.length()]).replace('\0', '-');
-		allowedAttempts = word.length() * 2;
+		allowedAttempts = (word.length() * 2) + 1;
 		reader.close();
 		System.out.println(word);
+		System.out.println("guessedLetters : " + guessedLetters + ", allowedAttempts : " + allowedAttempts);
 	}
 
 	public void callClientHandler(String[] args) {
+		System.out.println("callClientHandler");
 		try {
 			ServerSocket socket;
 
@@ -106,8 +109,9 @@ public class Main {
 	}
 
 	public static void main(String[] args) throws Exception {
+		System.out.println("MainServer");
 		Main m = new Main();
-		m.newWord();
+		// m.newWord();
 		m.callClientHandler(args);
 	}
 
