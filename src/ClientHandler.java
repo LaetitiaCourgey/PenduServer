@@ -96,6 +96,7 @@ public class ClientHandler implements Runnable {
 					ch.sendMessage2(sms);
 				}
 			}
+			game.setStarted(false);
 		} else if (msg.flag == Message.WIN) {
 			sendMessage();
 			for (ClientHandler ch : game.getClients()) {
@@ -104,6 +105,7 @@ public class ClientHandler implements Runnable {
 					ch.sendMessage2(sms);
 				}
 			}
+			game.setStarted(false);
 		}
 
 	}
@@ -193,17 +195,14 @@ public class ClientHandler implements Runnable {
 				{
 					if (message.flag == Message.NEW_GAME) // Client wants to start a new game
 					{
-						game.newWord();
+						System.out.println("flag new game, " + game.isStarted());
+						if (!game.isStarted()) {
+							game.newWord();
+						}
 						sendNewGame();
 						continue;
 
-					}
-//					else if (message.flag == Message.JOIN_GAME) {
-//						// game.newWord();
-//						sendNewGame();
-//						continue;
-//					} 
-					else if (message.flag == Message.CLOSE_CONNECTION) // Client terminated the connection
+					} else if (message.flag == Message.CLOSE_CONNECTION) // Client terminated the connection
 					{
 						in.close();
 						out.close();

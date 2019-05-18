@@ -20,6 +20,15 @@ public class Main {
 	private int allowedAttempts = 0;
 	private String word, guessedLetters;
 	private ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
+	private boolean started = false;
+
+	public boolean isStarted() {
+		return started;
+	}
+
+	public void setStarted(boolean started) {
+		this.started = started;
+	}
 
 	public int getAllowedAttempts() {
 		return allowedAttempts;
@@ -67,10 +76,12 @@ public class Main {
 		reader.close();
 		System.out.println(word);
 		System.out.println("guessedLetters : " + guessedLetters + ", allowedAttempts : " + allowedAttempts);
+		started = true;
 	}
 
 	public void callClientHandler(String[] args) {
 		System.out.println("callClientHandler");
+
 		try {
 			ServerSocket socket;
 
