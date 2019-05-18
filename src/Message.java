@@ -21,6 +21,7 @@ public class Message implements Serializable {
 	public int score, allowedAttempts;
 	public String word, guessedLetters;
 	public String clientGuess;
+	public String name;
 
 	Message(int f, int s, int a, String w, String g) {
 		flag = f;
@@ -28,5 +29,14 @@ public class Message implements Serializable {
 		allowedAttempts = a;
 		word = w;
 		guessedLetters = g;
+	}
+
+	public Message(int f, int s, int a, String w, String g, String name) {
+		flag = f;
+		score = s;
+		allowedAttempts = a;
+		word = w;
+		guessedLetters = g;
+		this.name = name;
 	}
 }
