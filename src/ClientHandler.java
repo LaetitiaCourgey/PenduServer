@@ -16,6 +16,7 @@ public class ClientHandler implements Runnable {
 	Main game;
 	String word, guessedLetters;
 	private String name;
+	String scores = "";
 
 	ClientHandler(Socket s, Main game) throws Exception {
 		System.out.println("ClientHandler");
@@ -94,7 +95,7 @@ public class ClientHandler implements Runnable {
 			sendMessage();
 			for (ClientHandler ch : game.getClients()) {
 				if (!ch.client.equals(client)) {
-					sms = new Message(Message.LOSE, ch.score, 0, null, null, name);
+					sms = new Message(Message.LOSE, ch.score, 0, null, null, name, scores);
 					ch.sendMessage2(sms);
 				}
 			}
@@ -103,7 +104,7 @@ public class ClientHandler implements Runnable {
 			sendMessage();
 			for (ClientHandler ch : game.getClients()) {
 				if (!ch.client.equals(client)) {
-					sms = new Message(Message.WIN, ch.score, 0, game.getWord(), null, name);
+					sms = new Message(Message.WIN, ch.score, 0, game.getWord(), null, name, scores);
 					ch.sendMessage2(sms);
 				}
 			}
@@ -134,7 +135,11 @@ public class ClientHandler implements Runnable {
 	private void sendCongrats() {
 		System.out.println("sendCongrats");
 		++score;
-		msg = new Message(Message.WIN, score, 0, game.getWord(), null, name);
+		scores = "";
+		for (ClientHandler ch : game.getClients()) {
+			scores += ch.name + ": " + ch.score + " points \n";
+		}
+		msg = new Message(Message.WIN, score, 0, game.getWord(), null, name, scores);
 		// sendMessage();
 		sendMessage3();
 
@@ -173,7 +178,11 @@ public class ClientHandler implements Runnable {
 						+ "  guessed wrong!  " + game.getGuessedLetters() + "   " + game.getAllowedAttempts());
 		} else {
 			--score;
-			msg = new Message(Message.LOSE, score, 0, null, null, name);
+			scores = "";
+			for (ClientHandler ch : game.getClients()) {
+				scores += ch.name + ": " + ch.score + " points \n";
+			}
+			msg = new Message(Message.LOSE, score, 0, null, null, name, scores);
 			System.out.println("le player" + name);
 			// sendMessage();
 			sendMessage3();
