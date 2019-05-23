@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 
 public class Main {
 	private static int maxClients = 10;
-	private static int port = 80;
+	private static int port = 81;
 	private static Executor executor;
 	public static final boolean PRINT_INFO = true;
 	private int allowedAttempts = 0;
@@ -72,7 +72,7 @@ public class Main {
 
 		word = reader.readLine();
 		guessedLetters = new String(new char[word.length()]).replace('\0', '-');
-		allowedAttempts = (word.length() * 2) + 1;
+		allowedAttempts = 8;
 		reader.close();
 		System.out.println(word);
 		System.out.println("guessedLetters : " + guessedLetters + ", allowedAttempts : " + allowedAttempts);
