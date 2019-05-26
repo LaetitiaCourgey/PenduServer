@@ -8,10 +8,13 @@ import java.util.Random;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-/***************************************************************************************
- * Written by: Simon Cicek * Last changed: 2012-04-13 *
- ***************************************************************************************/
-
+/**
+ * @author Tuan Nam Davaux, Laetitia Courgey and Samuel Cohen
+ * @since 2019-05-26
+ *        <p>
+ *        <b>Server Launcher</b>
+ *        </p>
+ */
 public class Main {
 	private static int maxClients = 10;
 	private static int port = 81;
@@ -62,9 +65,13 @@ public class Main {
 		this.clients = clients;
 	}
 
-	// Selects a new word from the list of words and sets allowed number of guesses
+	/**
+	 * Selects a new word from the list of words and sets allowed number of guesses
+	 * 
+	 * @throws Exception
+	 */
 	public void newWord() throws Exception {
-		System.out.println("nexWord");
+
 		File f = new File("words.txt");
 		BufferedReader reader = new BufferedReader(new FileReader(f));
 		for (int i = 0; i < new Random().nextInt((int) (f.length() - 1)); i++)
@@ -74,13 +81,12 @@ public class Main {
 		guessedLetters = new String(new char[word.length()]).replace('\0', '-');
 		allowedAttempts = 8;
 		reader.close();
-		System.out.println(word);
+		System.out.println("The new word to guess is : " + word);
 		System.out.println("guessedLetters : " + guessedLetters + ", allowedAttempts : " + allowedAttempts);
 		started = true;
 	}
 
 	public void callClientHandler(String[] args) {
-		System.out.println("callClientHandler");
 
 		try {
 			ServerSocket socket;
@@ -120,9 +126,8 @@ public class Main {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println("MainServer");
+		System.out.println("Server Launched");
 		Main m = new Main();
-		// m.newWord();
 		m.callClientHandler(args);
 	}
 

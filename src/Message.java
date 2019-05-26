@@ -1,11 +1,16 @@
 import java.io.Serializable;
 
-/***************************************************************************************
- * Written by: Simon Cicek * Last changed: 2012-04-13 *
- ***************************************************************************************/
+/**
+ * @author Tuan Nam Davaux, Laetitia Courgey and Samuel Cohen
+ * @since 2019-05-26
+ *        <p>
+ *        <b>This class will be used to pass information between client and
+ *        server</b>
+ *        </p>
+ */
 
-// This class will be used to pass information between client and server
 public class Message implements Serializable {
+
 	static final long serialVersionUID = -7588980448693010399L;
 
 	// Flags

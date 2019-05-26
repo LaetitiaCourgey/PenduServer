@@ -2,12 +2,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-/***************************************************************************************
- * Written by: Simon Cicek * Last changed: 2012-04-13 *
- ***************************************************************************************/
-
-// Handles all communication with a client
+/**
+ * @author Tuan Nam Davaux, Laetitia Courgey and Samuel Cohen
+ * @since 2019-05-26
+ *        <p>
+ *        <b>Handles all communication with a client</b>
+ *        </p>
+ */
 public class ClientHandler implements Runnable {
+
 	Message msg;
 	Socket client;
 	ObjectInputStream in;
@@ -19,36 +22,22 @@ public class ClientHandler implements Runnable {
 	String scores = "";
 
 	ClientHandler(Socket s, Main game) throws Exception {
-		System.out.println("ClientHandler");
 		try {
 			client = s;
 			in = new ObjectInputStream(s.getInputStream());
 			out = new ObjectOutputStream(client.getOutputStream());
 			this.game = game;
 			this.score = 0;
-			this.name = "Player " + game.getClients().size();
+			this.name = "Player " + (1 + (int) (Math.random() * ((100 - 1) + 1)));
 		} catch (Exception ex) {
 		}
 
 	}
 
-//	// Selects a new word from the list of words and sets allowed number of guesses
-//	private void newWord() throws Exception {
-//		File f = new File("words.txt");
-//		BufferedReader reader = new BufferedReader(new FileReader(f));
-//		for (int i = 0; i < new Random().nextInt((int) (f.length() - 1)); i++)
-//			reader.readLine();
-//
-//		word = reader.readLine();
-//		guessedLetters = new String(new char[word.length()]).replace('\0', '-');
-//		allowedAttempts = word.length() * 2;
-//		reader.close();
-//		System.out.println(word);
-//	}
-
-	// Adds a valid letter to the current view of the word
+	/**
+	 * Adds a valid letter to the current view of the word
+	 */
 	private void addValidLetter(String l) {
-		System.out.println("addValidLetter");
 		// Make sure it's a single letter
 		if (l.length() != 1)
 			return;
@@ -69,9 +58,10 @@ public class ClientHandler implements Runnable {
 		game.setGuessedLetters(new String(chars));
 	}
 
-	// Sends the current message and flushes the stream
+	/**
+	 * Sends the current message to this.client and flushes the stream
+	 */
 	private void sendMessage() {
-		System.out.println("sendMessage");
 		try {
 			out.writeObject(msg);
 			out.flush();
@@ -80,7 +70,6 @@ public class ClientHandler implements Runnable {
 	}
 
 	private void sendMessage2(Message sms) {
-		System.out.println("sendMessage2");
 		try {
 			out.writeObject(sms);
 			out.flush();
@@ -88,8 +77,12 @@ public class ClientHandler implements Runnable {
 		}
 	}
 
+	/**
+	 * Notifies this.client who has lost or won with his new score and then notifies
+	 * others
+	 */
 	private void sendMessage3() {
-		System.out.println("sendMessage3");
+
 		Message sms;
 		if (msg.flag == Message.LOSE) {
 			sendMessage();
@@ -113,27 +106,34 @@ public class ClientHandler implements Runnable {
 
 	}
 
+	/**
+	 * Sends message to all clients
+	 */
 	private void sendMessageAll() {
-		System.out.println("sendMessageAll");
+
 		for (ClientHandler ch : game.getClients()) {
 			ch.sendMessage2(msg);
 		}
 	}
 
-	// Sends a new message indicating that a new game has been started
+	/**
+	 * Sends a new message indicating that a new game has been started
+	 */
 	private void sendNewGame() {
-		System.out.println("sendNewGame");
+
 		msg = new Message(Message.NEW_GAME, score, game.getAllowedAttempts(), null, game.getGuessedLetters(), name);
 		sendMessage();
 
 		if (Main.PRINT_INFO)
-			System.out.println(
-					"Client: " + client.getInetAddress().toString().replaceFirst("/", "") + "  started a new game!");
+			System.out.println("Client: " + client.getInetAddress().toString().replaceFirst("/", "") + " (" + name
+					+ ")  started a new game!");
 	}
 
-	// Sends a new message indicating that the client has won
+	/**
+	 * Sends a new message indicating that the client has won
+	 */
 	private void sendCongrats() {
-		System.out.println("sendCongrats");
+
 		++score;
 		scores = "";
 		for (ClientHandler ch : game.getClients()) {
@@ -144,29 +144,31 @@ public class ClientHandler implements Runnable {
 		sendMessage3();
 
 		if (Main.PRINT_INFO)
-			System.out.println(
-					"Client: " + client.getInetAddress().toString().replaceFirst("/", "") + "  won! Score: " + score);
+			System.out.println(name + " won! Score: " + score);
 	}
 
-	// Sends a new message indicating that the client has guessed a single letter
-	// right
+	/**
+	 * Sends a new message indicating that the client has guessed a single letter
+	 * right
+	 */
 	private void sendRightGuess() {
-		System.out.println("sendRightGuess");
+
 		msg = new Message(Message.RIGHT_GUESS, 0, game.getAllowedAttempts(), null, game.getGuessedLetters());
 		// sendMessage();
 		sendMessageAll();
 
 		if (Main.PRINT_INFO)
-			System.out.println("Client: " + client.getInetAddress().toString().replaceFirst("/", "")
-					+ "  guessed right!  " + game.getGuessedLetters() + "   " + game.getAllowedAttempts());
+			System.out.println(name + "  guessed right!  " + game.getGuessedLetters() + "  attempts left : "
+					+ game.getAllowedAttempts());
 	}
 
-	// Sends a new message indicating that the client has guessed a single letter
-	// wrong
-	// or that the client has lost depending on the value fo the number of allowed
-	// guesses
+	/**
+	 * Sends a new message indicating that the client has guessed a single letter
+	 * wrong or that the client has lost depending on the value fo the number of
+	 * allowed guesses
+	 */
 	private void sendWrongGuess() {
-		System.out.println("sendWrongGuess");
+
 		game.setAllowedAttempts(game.getAllowedAttempts() - 1);
 		if (game.getAllowedAttempts() > 0) {
 			msg = new Message(Message.WRONG_GUESS, 0, game.getAllowedAttempts(), null, game.getGuessedLetters());
@@ -174,8 +176,8 @@ public class ClientHandler implements Runnable {
 			sendMessageAll();
 
 			if (Main.PRINT_INFO)
-				System.out.println("Client: " + client.getInetAddress().toString().replaceFirst("/", "")
-						+ "  guessed wrong!  " + game.getGuessedLetters() + "   " + game.getAllowedAttempts());
+				System.out.println(name + "  guessed wrong!  " + game.getGuessedLetters() + " attempts left : "
+						+ game.getAllowedAttempts());
 		} else {
 			--score;
 			scores = "";
@@ -183,19 +185,16 @@ public class ClientHandler implements Runnable {
 				scores += ch.name + ": " + ch.score + " points \n";
 			}
 			msg = new Message(Message.LOSE, score, 0, null, null, name, scores);
-			System.out.println("le player" + name);
-			// sendMessage();
 			sendMessage3();
 
 			if (Main.PRINT_INFO)
-				System.out.println("Client: " + client.getInetAddress().toString().replaceFirst("/", "")
-						+ " lost! Score: " + score);
+				System.out.println(name + " lost! Score: " + score);
 		}
 	}
 
 	@Override
 	public void run() {
-		System.out.println("run");
+
 		// Runs as long as a connection to the client is maintained
 		while (!client.isClosed()) {
 			if (in == null) // Something went wrong when getting the input stream so it is pointless to go
@@ -207,7 +206,6 @@ public class ClientHandler implements Runnable {
 				{
 					if (message.flag == Message.NEW_GAME) // Client wants to start a new game
 					{
-						System.out.println("flag new game, " + game.isStarted());
 						if (!game.isStarted()) {
 							game.newWord();
 						}
@@ -246,7 +244,7 @@ public class ClientHandler implements Runnable {
 			}
 		}
 		if (Main.PRINT_INFO)
-			System.out.println(
-					"Client: " + client.getInetAddress().toString().replaceFirst("/", "") + "  has disconnected.");
+			game.getClients().remove(this);
+		System.out.println(name + " has disconnected.");
 	}
 }
