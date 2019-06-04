@@ -72,7 +72,6 @@ public class ClientHandler implements Runnable {
 
 	private void sendMessage2(Message sms) {
 		try {
-			System.out.println("sjikmf" + sms.letters);
 			out.writeObject(sms);
 			out.flush();
 		} catch (Exception e) {
@@ -114,7 +113,6 @@ public class ClientHandler implements Runnable {
 	private void sendMessageAll() {
 
 		for (ClientHandler ch : game.getClients()) {
-			System.out.println("ddfsdf  " + msg.letters);
 			ch.sendMessage2(msg);
 		}
 	}
@@ -176,10 +174,8 @@ public class ClientHandler implements Runnable {
 
 		game.setAllowedAttempts(game.getAllowedAttempts() - 1);
 		if (game.getAllowedAttempts() > 0) {
-			System.out.println("l : " + game.getLetters().toString());
 			msg = new Message(Message.WRONG_GUESS, 0, game.getAllowedAttempts(), l, game.getGuessedLetters(), null,
 					game.getLetters());
-			System.out.println("letters : " + msg.letters);
 			// sendMessage();
 			sendMessageAll();
 
@@ -242,9 +238,7 @@ public class ClientHandler implements Runnable {
 							ArrayList<String> l = game.getLetters();
 							if (!l.contains(message.clientGuess.toLowerCase())) {
 								l.add(message.clientGuess.toLowerCase());
-								System.out.println("dans le if ");
 							}
-							System.out.println("l : " + l.toString());
 							game.setLetters(l);
 							sendWrongGuess(message.clientGuess.toLowerCase());
 						}
