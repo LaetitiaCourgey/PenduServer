@@ -1,6 +1,7 @@
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * @author Tuan Nam Davaux, Laetitia Courgey and Samuel Cohen
@@ -15,7 +16,7 @@ public class ClientHandler implements Runnable {
 	Socket client;
 	ObjectInputStream in;
 	ObjectOutputStream out;
-	int score, allowedAttempts = 0;
+	int score = 0;
 	Main game;
 	String word, guessedLetters;
 	private String name;
@@ -71,6 +72,7 @@ public class ClientHandler implements Runnable {
 
 	private void sendMessage2(Message sms) {
 		try {
+			System.out.println("sjikmf" + sms.letters);
 			out.writeObject(sms);
 			out.flush();
 		} catch (Exception e) {
@@ -112,6 +114,7 @@ public class ClientHandler implements Runnable {
 	private void sendMessageAll() {
 
 		for (ClientHandler ch : game.getClients()) {
+			System.out.println("ddfsdf  " + msg.letters);
 			ch.sendMessage2(msg);
 		}
 	}
@@ -121,7 +124,8 @@ public class ClientHandler implements Runnable {
 	 */
 	private void sendNewGame() {
 
-		msg = new Message(Message.NEW_GAME, score, game.getAllowedAttempts(), null, game.getGuessedLetters(), name);
+		msg = new Message(Message.NEW_GAME, score, game.getAllowedAttempts(), null, game.getGuessedLetters(), name,
+				game.getLetters());
 		sendMessage();
 
 		if (Main.PRINT_INFO)
@@ -153,7 +157,8 @@ public class ClientHandler implements Runnable {
 	 */
 	private void sendRightGuess() {
 
-		msg = new Message(Message.RIGHT_GUESS, 0, game.getAllowedAttempts(), null, game.getGuessedLetters());
+		msg = new Message(Message.RIGHT_GUESS, 0, game.getAllowedAttempts(), null, game.getGuessedLetters(), null,
+				game.getLetters());
 		// sendMessage();
 		sendMessageAll();
 
@@ -167,11 +172,14 @@ public class ClientHandler implements Runnable {
 	 * wrong or that the client has lost depending on the value fo the number of
 	 * allowed guesses
 	 */
-	private void sendWrongGuess() {
+	private void sendWrongGuess(String l) {
 
 		game.setAllowedAttempts(game.getAllowedAttempts() - 1);
 		if (game.getAllowedAttempts() > 0) {
-			msg = new Message(Message.WRONG_GUESS, 0, game.getAllowedAttempts(), null, game.getGuessedLetters());
+			System.out.println("l : " + game.getLetters().toString());
+			msg = new Message(Message.WRONG_GUESS, 0, game.getAllowedAttempts(), l, game.getGuessedLetters(), null,
+					game.getLetters());
+			System.out.println("letters : " + msg.letters);
 			// sendMessage();
 			sendMessageAll();
 
@@ -222,21 +230,30 @@ public class ClientHandler implements Runnable {
 
 					if (message.clientGuess.length() == 1) // Client sent a single letter
 					{
-						if (game.getWord().contains(message.clientGuess)) // The letter is found in the word
+						if (game.getWord().contains((message.clientGuess).toLowerCase())) // The letter is found in the
+																							// word
 						{
-							addValidLetter(message.clientGuess);
+							addValidLetter(message.clientGuess.toLowerCase());
 							if (!game.getGuessedLetters().contains("-")) // The client has guessed the entire word
 								sendCongrats();
 							else
 								sendRightGuess();
-						} else // The client guessed wrong
-							sendWrongGuess();
+						} else {// The client guessed wrong
+							ArrayList<String> l = game.getLetters();
+							if (!l.contains(message.clientGuess.toLowerCase())) {
+								l.add(message.clientGuess.toLowerCase());
+								System.out.println("dans le if ");
+							}
+							System.out.println("l : " + l.toString());
+							game.setLetters(l);
+							sendWrongGuess(message.clientGuess.toLowerCase());
+						}
 					} else // The client guesses a word
 					{
-						if (game.getWord().equals(message.clientGuess))
+						if (game.getWord().equals(message.clientGuess.toLowerCase()))
 							sendCongrats();
 						else
-							sendWrongGuess();
+							sendWrongGuess(message.clientGuess.toLowerCase());
 					}
 				} else
 					Thread.yield(); // The thread gives up its timeslice if the client does not send anything

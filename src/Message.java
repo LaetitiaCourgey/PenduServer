@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * @author Tuan Nam Davaux, Laetitia Courgey and Samuel Cohen
@@ -28,6 +29,7 @@ public class Message implements Serializable {
 	public String clientGuess;
 	public String name;
 	public String resultats;
+	public ArrayList<String> letters;
 
 	Message(int f, int s, int a, String w, String g) {
 		flag = f;
@@ -54,5 +56,16 @@ public class Message implements Serializable {
 		guessedLetters = g;
 		this.name = name;
 		resultats = scores;
+	}
+
+	public Message(int f, int s, int a, String w, String g, String name, ArrayList<String> letters) {
+		flag = f;
+		score = s;
+		allowedAttempts = a;
+		word = w;
+		guessedLetters = g;
+		this.name = name;
+		this.letters = letters;
+		System.out.println("ffhf" + letters.toString());
 	}
 }

@@ -22,8 +22,17 @@ public class Main {
 	public static final boolean PRINT_INFO = true;
 	private int allowedAttempts = 0;
 	private String word, guessedLetters;
+	private ArrayList<String> letters = new ArrayList<String>();
 	private ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
 	private boolean started = false;
+
+	public ArrayList<String> getLetters() {
+		return letters;
+	}
+
+	public void setLetters(ArrayList<String> letters) {
+		this.letters = letters;
+	}
 
 	public boolean isStarted() {
 		return started;
@@ -74,12 +83,15 @@ public class Main {
 
 		File f = new File("words.txt");
 		BufferedReader reader = new BufferedReader(new FileReader(f));
-		for (int i = 0; i < new Random().nextInt((int) (f.length() - 1)); i++)
+		int r = new Random().nextInt(835);
+		for (int i = 0; i < r; i++)
 			reader.readLine();
 
-		word = reader.readLine();
+		word = reader.readLine().toLowerCase();
+
 		guessedLetters = new String(new char[word.length()]).replace('\0', '-');
 		allowedAttempts = 8;
+		letters = new ArrayList<String>();
 		reader.close();
 		System.out.println("The new word to guess is : " + word);
 		System.out.println("guessedLetters : " + guessedLetters + ", allowedAttempts : " + allowedAttempts);
