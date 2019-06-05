@@ -190,7 +190,7 @@ public class ClientHandler implements Runnable {
 			for (ClientHandler ch : game.getClients()) {
 				scores += ch.name + ": " + ch.score + " points \n";
 			}
-			msg = new Message(Message.LOSE, score, 0, null, null, name, scores);
+			msg = new Message(Message.LOSE, score, 0, game.getWord(), null, name, scores);
 			sendMessage3();
 
 			if (Main.PRINT_INFO)
