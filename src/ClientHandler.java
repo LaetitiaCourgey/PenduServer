@@ -89,7 +89,7 @@ public class ClientHandler implements Runnable {
 			sendMessage();
 			for (ClientHandler ch : game.getClients()) {
 				if (!ch.client.equals(client)) {
-					sms = new Message(Message.LOSE, ch.score, 0, null, null, name, scores);
+					sms = new Message(Message.LOSE, ch.score, 0, game.getWord(), null, name, scores);
 					ch.sendMessage2(sms);
 				}
 			}
