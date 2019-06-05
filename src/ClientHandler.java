@@ -89,7 +89,7 @@ public class ClientHandler implements Runnable {
 			sendMessage();
 			for (ClientHandler ch : game.getClients()) {
 				if (!ch.client.equals(client)) {
-					sms = new Message(Message.LOSE, ch.score, 0, null, null, name, scores);
+					sms = new Message(Message.LOSE, ch.score, 0, game.getWord(), null, name, scores);
 					ch.sendMessage2(sms);
 				}
 			}
@@ -228,6 +228,7 @@ public class ClientHandler implements Runnable {
 
 					if (message.clientGuess.length() == 1) // Client sent a single letter
 					{
+
 						if (game.getWord().contains((message.clientGuess).toLowerCase())) // The letter is found in the
 																							// word
 						{
