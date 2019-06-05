@@ -119,9 +119,11 @@ public class ClientHandler implements Runnable {
 
 	/**
 	 * Sends a new message indicating that a new game has been started
+	 * 
+	 * @param pseudo
 	 */
-	private void sendNewGame() {
-
+	private void sendNewGame(String pseudo) {
+		name = pseudo;
 		msg = new Message(Message.NEW_GAME, score, game.getAllowedAttempts(), null, game.getGuessedLetters(), name,
 				game.getLetters());
 		sendMessage();
@@ -213,7 +215,7 @@ public class ClientHandler implements Runnable {
 						if (!game.isStarted()) {
 							game.newWord();
 						}
-						sendNewGame();
+						sendNewGame(message.name);
 						continue;
 
 					} else if (message.flag == Message.CLOSE_CONNECTION) // Client terminated the connection
