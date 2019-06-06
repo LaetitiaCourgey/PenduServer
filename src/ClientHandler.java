@@ -29,7 +29,6 @@ public class ClientHandler implements Runnable {
 			out = new ObjectOutputStream(client.getOutputStream());
 			this.game = game;
 			this.score = 0;
-			this.name = "Player " + (1 + (int) (Math.random() * ((100 - 1) + 1)));
 		} catch (Exception ex) {
 		}
 
